@@ -7,12 +7,14 @@
 //
 
 #import "EUExImageBrowser.h"
+#import "ACPPhotoCollectionView.h"
 #import "EUExBase.h"
-#import "EUtility.h"
 #import "JSON.h"
 
+@implementation EUExImageBrowser{
+    ACPPhotoCollectionView *photoCollectionView;
+}
 
-@implementation EUExImageBrowser
 @synthesize pathArray;
 @synthesize initialStatusBarStyle;
 @synthesize photosMultipleArray;
@@ -22,9 +24,15 @@
 #pragma mark - 使用这个插件需要添加 "$(SRCROOT)/../../../IOSPlugin/Plugin/module/imagebrowserplugin/three20"
 
 -(id)initWithBrwView:(EBrowserView *) eInBrwView {
+    
     if (self = [super initWithBrwView:eInBrwView]) {
+        
+        NSLog(@"EUExImageBrowser--version--3.0.21");
+        
     }
+    
     return self;
+    
 }
 
 
@@ -116,28 +124,39 @@
     if (inImageArr && [inImageArr count]>0) {
         self.pathArray = [NSMutableArray arrayWithArray:inImageArr];
         aImageObj = [[AppImagePicker alloc] initWithEuex:self];
+        aImageObj = [[AppImagePicker alloc] initWithEuex:self];
+        if (photoCollectionView) {
+            
+        } else {
+            photoCollectionView = [ACPPhotoCollectionView alloc];
+            photoCollectionView.euexImageBrowserObj = self;
+        }
         NSMutableArray *imageArray = [NSMutableArray arrayWithCapacity:20];
         for (int i = 0; i<[inImageArr count]; i++) {
             NSString *imageURL = [inImageArr objectAtIndex:i];
             if (![imageURL hasPrefix:@"http"]) {
                 //本地图片
-                imageURL = [super absPath:imageURL];
-                NSString *relPath;
-                if ([imageURL hasPrefix:@"/private/var"]) {
-                    relPath = [imageURL substringFromIndex:[NSHomeDirectory() length]+9];
-                }else {
-                    relPath = [imageURL substringFromIndex:[NSHomeDirectory() length]+1];
+                if (startIndex == 0) {
+                    imageURL = [super absPath:imageURL];
+                    NSString *relPath;
+                    if ([imageURL hasPrefix:@"/private/var"]) {
+                        relPath = [imageURL substringFromIndex:[NSHomeDirectory() length]+9];
+                    }else {
+                        relPath = [imageURL substringFromIndex:[NSHomeDirectory() length]+1];
+                    }
+                    if ([relPath hasPrefix:@"Documents/"]) {
+                        NSString *gPath = [relPath substringFromIndex:10];
+                        imageURL = [NSString stringWithFormat:@"documents://%@",gPath];
+                    }else if ([relPath rangeOfString:@".app/"].length>0) {
+                        NSString *gPath = [relPath substringFromIndex:[relPath rangeOfString:@".app"].location+5];
+                        imageURL = [NSString stringWithFormat:@"bundle://%@",gPath];
+                    }else{
+                        
+                    }
+                } else {
+                    imageURL = [super absPath:imageURL];
                 }
-                if ([relPath hasPrefix:@"Documents/"]) {
-                    NSString *gPath = [relPath substringFromIndex:10];
-                    imageURL = [NSString stringWithFormat:@"documents://%@",gPath];
-                }else if ([relPath rangeOfString:@".app/"].length>0) {
-                    NSString *gPath = [relPath substringFromIndex:[relPath rangeOfString:@".app"].location+5];
-                    imageURL = [NSString stringWithFormat:@"bundle://%@",gPath];
-                }else{
-                    
-                }
-            }else {
+            } else {
                 //                //网络图片
                 NSURL *midUrl = [NSURL URLWithString:imageURL];
                 NSURL *stardUrl = [midUrl standardizedURL];
@@ -145,7 +164,13 @@
             }
             [imageArray addObject:imageURL];
         }
-        [aImageObj openImageBrowserWithSet:imageArray startIndex:startIndex showFlag:sFlag isDelete:isDelete];
+        //        [aImageObj openImageBrowserWithSet:imageArray startIndex:startIndex showFlag:sFlag isDelete:isDelete];
+        if (startIndex == 0) {
+            [aImageObj openImageBrowserWithSet:imageArray startIndex:startIndex showFlag:sFlag isDelete:isDelete];
+        } else {
+            [photoCollectionView openPhotoCollectionViewWithSet:imageArray startIndex:startIndex];
+        }
+        
     }else {
         [self jsFailedWithOpId:0 errorCode:1100201 errorDes:ERROR_IB_ARGS];
     }

@@ -14,6 +14,7 @@
 #import "QBImagePickerAssetCell.h"
 #import "QBImagePickerFooterView.h"
 #define isIOS7	( [[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending )
+#define KUEX_SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
 @interface QBAssetCollectionViewController ()
 
 @property (nonatomic, retain) NSMutableArray *assets;
@@ -61,6 +62,15 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(KUEX_SCREEN_WIDTH/2 - 50, 0, 90, 35)];
+    
+    _titleLabel.text = [NSString stringWithFormat:@"0/%ld",(long)self.assetsGroup.numberOfAssets];
+    _titleLabel.textAlignment = UITextAlignmentCenter;
+    //_titleLabel.layer.borderWidth = 1;
+    // _titleLabel.layer.borderColor = [UIColor redColor].CGColor;
+    [_titleLabel setTintColor:[UIColor blackColor]];
+    self.navigationItem.titleView = _titleLabel;
+
     
     // Reload
     [self reloadData];
@@ -452,6 +462,8 @@
         // Set done button state
         [self updateDoneButton];
        // NSLog(@"已经选择了%ld",self.selectedAssets.count);
+        _titleLabel.text = [NSString stringWithFormat:@"%ld/%ld",(long)self.selectedAssets.count,(long)self.assetsGroup.numberOfAssets];
+
         // Update header text
 //        if((selected && self.selectedAssets.count == self.assets.count)||(!selected && self.selectedAssets.count == self.assets.count - 1)) {
 //            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];

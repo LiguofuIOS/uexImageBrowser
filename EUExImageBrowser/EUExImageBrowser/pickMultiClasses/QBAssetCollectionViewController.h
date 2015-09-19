@@ -36,5 +36,6 @@
 @property (nonatomic, assign) BOOL limitsMaximumNumberOfSelection;
 @property (nonatomic, assign) NSUInteger minimumNumberOfSelection;
 @property (nonatomic, assign) NSUInteger maximumNumberOfSelection;
+@property (nonatomic, retain) UILabel *titleLabel;
 
 @end

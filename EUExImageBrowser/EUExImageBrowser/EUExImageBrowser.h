@@ -33,6 +33,8 @@
 #import "AppImagePicker.h"
 #import <UIKit/UIKit.h>
 #import "QBImagePickerController.h"
+#import "EUtility.h"
+
 @interface EUExImageBrowser : EUExBase<QBImagePickerControllerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>{
 	DeviceImagePicker *dImageObj;
 	AppImagePicker *aImageObj;
