@@ -35,8 +35,6 @@
     
 }
 
-
-
 -(void)dealloc{
     if (dImageObj) {
         [dImageObj release];
@@ -123,7 +121,6 @@
     }
     if (inImageArr && [inImageArr count]>0) {
         self.pathArray = [NSMutableArray arrayWithArray:inImageArr];
-        aImageObj = [[AppImagePicker alloc] initWithEuex:self];
         aImageObj = [[AppImagePicker alloc] initWithEuex:self];
         if (photoCollectionView) {
             

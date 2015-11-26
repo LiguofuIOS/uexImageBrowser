@@ -2,14 +2,17 @@
 //  ACPPhotoCollectionViewCell.m
 //  EUExImageBrowser
 //
-//  Created by liguofu on 15/7/17.
+//  Created by appcan on 15/7/17.
 //  Copyright (c) 2015年 xll. All rights reserved.
 //
 
 #import "ACPPhotoCollectionViewCell.h"
+#import "ACPPhotoCollectionView.h"
 
 @implementation ACPPhotoCollectionViewCell {
-    CGFloat  lastScale;
+    
+    BOOL isShow;
+    
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -18,7 +21,7 @@
     
     if (self) {
         
-       _imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 25,CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
+       _imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0,CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
         /*
          UIViewContentModeScaleToFill,
          UIViewContentModeScaleAspectFit,
@@ -32,10 +35,16 @@
         
         [_imgView addGestureRecognizer:pinchGestureRecognizer];
         
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                             action:@selector(hidden:)];
+        
+        [_imgView addGestureRecognizer:tapRecognizer];
+        
+        isShow = YES;
 #if 0
-        self.layer.borderWidth = 2;
-        self.layer.borderColor = [UIColor redColor].CGColor;
-        _imgView.layer.borderWidth = 2;
+        //self.layer.borderWidth = 4;
+        //self.layer.borderColor = [UIColor redColor].CGColor;
+        _imgView.layer.borderWidth = 4;
         _imgView.layer.borderColor = [UIColor yellowColor].CGColor;
 #endif
         [self.contentView addSubview:_imgView];
@@ -48,6 +57,20 @@
 
 }
 
+- (void)hidden:(UIGestureRecognizer *)tap {
+    
+    if (_delegate && [_delegate performSelector:@selector(showView)]) {
+        
+        [_delegate showView];
+        
+    }
+   
+    
+}
+
+- (void)showView{
+    
+}
 - (void)dealloc {
     
     if (_imgView) {
